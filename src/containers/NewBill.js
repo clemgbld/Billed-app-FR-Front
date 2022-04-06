@@ -19,21 +19,42 @@ export default class NewBill {
   }
   handleChangeFile = (e) => {
     e.preventDefault();
-    const file = this.document.querySelector(`input[data-testid="file"]`)
-      .files[0];
+    const input = this.document.querySelector(`input[data-testid="file"]`);
+    const submitBtn = this.document.getElementById("btn-send-bill");
+    const file = input.files[0];
     const filePath = e.target.value.split(/\\/g);
     const fileName = filePath[filePath.length - 1];
     // TODO:
+    if ((submitBtn.disabled = true)) {
+      submitBtn.disabled = false;
+      input.classList.add("blue-border");
+      input.classList.remove("red-border");
+      input.classList.remove("error-color");
+    }
+    if (this.document.querySelector(".error")) {
+      this.document.querySelector(".error").remove();
+    }
     const regexFileAccepted = new RegExp("^.*.(jpg|jpeg|png)$", "i");
-    if (!regexFileAccepted.test(file.name))
-      return (this.document.querySelector(`input[data-testid="file"]`).value =
-        "");
+    if (!regexFileAccepted.test(fileName)) {
+      input.classList.remove("blue-border");
+      input.classList.add("red-border");
+      input.classList.add("error-color");
+
+      const errorMessage = this.document.createElement("p");
+      errorMessage.textContent =
+        "Veuillez choisir un format correct (jpg,jpeg,png)";
+      errorMessage.classList.add("error");
+
+      input.parentElement.appendChild(errorMessage);
+
+      submitBtn.disabled = true;
+      return false;
+    }
 
     const formData = new FormData();
     const email = JSON.parse(localStorage.getItem("user")).email;
     formData.append("file", file);
     formData.append("email", email);
-
     this.store
       .bills()
       .create({
@@ -43,7 +64,6 @@ export default class NewBill {
         },
       })
       .then(({ fileUrl, key }) => {
-        console.log(fileUrl);
         this.billId = key;
         this.fileUrl = fileUrl;
         this.fileName = fileName;
@@ -52,10 +72,7 @@ export default class NewBill {
   };
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log(
-      'e.target.querySelector(`input[data-testid="datepicker"]`).value',
-      e.target.querySelector(`input[data-testid="datepicker"]`).value
-    );
+
     const email = JSON.parse(localStorage.getItem("user")).email;
     const bill = {
       email,
