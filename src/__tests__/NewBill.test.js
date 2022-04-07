@@ -3,11 +3,9 @@
  */
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
-import { screen, waitFor, fireEvent, getByTestId } from "@testing-library/dom";
+import { screen, fireEvent } from "@testing-library/dom";
 import NewBillUI from "../views/NewBillUI.js";
 import NewBill from "../containers/NewBill.js";
-import { ROUTES_PATH } from "../constants/routes.js";
-import router from "../app/Router.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import mockStore from "../__mocks__/store";
 
@@ -78,6 +76,7 @@ describe("Given I am connected as an employee", () => {
         amount: "348",
         vat: "70",
         pct: "20",
+        commentary: "",
         fileName: "test.jpg",
         fileUrl:
           "https://test.storage.tld/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a",
@@ -114,6 +113,27 @@ describe("Given I am connected as an employee", () => {
       submit.addEventListener("click", handleSubmit);
       fireEvent.click(submit);
       expect(handleSubmit).toHaveBeenCalled();
+    });
+  });
+
+  //integration test POST request
+  describe("When i add a file to the file input sucessfully", () => {
+    test("then post bill from mock APi", async () => {
+      const fakeFileData = new FormData();
+      const files = {
+        data: fakeFileData,
+        headers: {
+          noContentType: true,
+        },
+      };
+      console.log(mockStore.create);
+      const postSpy = jest.spyOn(mockStore, "bills");
+
+      const postFile = jest.spyOn(postSpy, "create");
+
+      postFile(files);
+
+      expect(postFile).toHaveBeenCalled();
     });
   });
 });

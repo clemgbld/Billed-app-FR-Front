@@ -114,7 +114,7 @@ describe("Given I am connected as an employee", () => {
       expect(contentAccepted.length).toEqual(1);
     });
 
-    test("fetches bills from an Api and fails with 404 message error", async () => {
+    test("then fetches bills from an Api fails with 404 message error", async () => {
       const getBillsSpy = jest.spyOn(mockStore, "bills");
       getBillsSpy.mockImplementationOnce(() => {
         return {
@@ -132,7 +132,7 @@ describe("Given I am connected as an employee", () => {
       expect(message).toBeTruthy();
     });
 
-    test("fetches bills from an Api and fails with 500 message error", async () => {
+    test("then fetches bills from an Api fails with 500 message error", async () => {
       const getBillsSpy = jest.spyOn(mockStore, "bills");
       getBillsSpy.mockImplementationOnce(() => {
         return {
