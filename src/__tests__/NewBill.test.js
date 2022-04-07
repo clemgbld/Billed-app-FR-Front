@@ -9,6 +9,7 @@ import NewBill from "../containers/NewBill.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import mockStore from "../__mocks__/store";
 import postBill from "../__mocks__/mockPostBill.js";
+import BillsUI from "../views/BillsUI.js";
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
@@ -143,6 +144,30 @@ describe("Given I am connected as an employee", () => {
 
       expect(postNewBill).toHaveBeenCalled();
       expect(billsUpdated.data.length).toBe(5);
+    });
+
+    test("then an Error 404 occurs", async () => {
+      postBill.post.mockImplementationOnce(() => {
+        Promise.reject(new Error("Erreur 404"));
+      });
+
+      document.body.innerHTML = BillsUI({ error: "Erreur 404" });
+
+      const errorMessage = screen.getByText(/Erreur 404/);
+
+      expect(errorMessage).toBeTruthy();
+    });
+
+    test("then an Error 500 occurs", async () => {
+      postBill.post.mockImplementationOnce(() => {
+        Promise.reject(new Error("Erreur 500"));
+      });
+
+      document.body.innerHTML = BillsUI({ error: "Erreur 500" });
+
+      const errorMessage = screen.getByText(/Erreur 500/);
+
+      expect(errorMessage).toBeTruthy();
     });
   });
 });
