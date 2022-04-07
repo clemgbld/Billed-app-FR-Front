@@ -8,6 +8,7 @@ import NewBillUI from "../views/NewBillUI.js";
 import NewBill from "../containers/NewBill.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import mockStore from "../__mocks__/store";
+import postBill from "../__mocks__/mockPostBill.js";
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
@@ -119,21 +120,29 @@ describe("Given I am connected as an employee", () => {
   //integration test POST request
   describe("When i add a file to the file input sucessfully", () => {
     test("then post bill from mock APi", async () => {
-      const fakeFileData = new FormData();
-      const files = {
-        data: fakeFileData,
-        headers: {
-          noContentType: true,
-        },
+      const fakeNewBill = {
+        id: "57qAXb6fIm29zKkLzMl",
+        vat: "90",
+        fileUrl:
+          "https://teststorage.googleapis.com/v0/b/billable-178b6.a…f-1.jpg?alt=media&token=z1640e12-b24b-4b11-ae52-529152e8602a",
+        status: "pending",
+        type: "Hôtel et logement",
+        commentary: "déplacement billed",
+        name: "encore",
+        fileName: "preview-facture-free-807801-pdf-8.jpg",
+        date: "2022-04-07",
+        amount: 700,
+        commentAdmin: "ok",
+        email: "a@a",
+        pct: 35,
       };
-      console.log(mockStore.create);
-      const postSpy = jest.spyOn(mockStore, "bills");
 
-      const postFile = jest.spyOn(postSpy, "create");
+      const postNewBill = jest.spyOn(postBill, "post");
 
-      postFile(files);
+      const billsUpdated = await postNewBill(fakeNewBill);
 
-      expect(postFile).toHaveBeenCalled();
+      expect(postNewBill).toHaveBeenCalled();
+      expect(billsUpdated.data.length).toBe(5);
     });
   });
 });
